@@ -173,5 +173,16 @@ print(min_coins(27))  # {10: 2, 5: 1, 2: 1}
 Описание: Выбрать максимальное число непересекающихся встреч. Каждая встреча задана временем начала и конца
 
 ```python
-None)))))
+def max_meetings(meetings):
+    meetings.sort(key=lambda x: x[1])
+    selected = []
+    last_end = float('-inf')
+    for start, end in meetings:
+        if start >= last_end:
+            selected.append((start, end))
+            last_end = end
+    return selected
+
+meetings = [(1, 3), (2, 5), (3, 8), (4, 6), (6, 9), (8, 10)]
+print(max_meetings(meetings))  # [(1, 3), (3, 8), (8, 10)]
 ```
