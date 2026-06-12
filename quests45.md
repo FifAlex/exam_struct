@@ -28,7 +28,8 @@ def mediana2arrs(arr1, arr2):
         k += 1
     
     return mediana // len(mid)
-```
+
 a1 = [1, 2, 4, 6]
 a2 = [2, 3, 7, 9, 11, 13, 27]
 print(mediana2arrs(a1, a2))
+```
