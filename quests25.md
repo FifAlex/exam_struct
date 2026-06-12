@@ -121,7 +121,9 @@ class Queue:
     def dequeue(self):
         if self.items:
             return self.items.pop(0)
-        raise IndexError("Очередь пуста")
+        else:
+            print("Очередь пуста")
+
 
 q = Queue()
 q.enqueue(10)
