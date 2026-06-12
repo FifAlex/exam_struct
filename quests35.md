@@ -1,1 +1,232 @@
+### Задачи на 35 баллов
+
+### 10. Ханойские башни
+Описание: Реализовать задачу «Ханойские башни» с выводом всех перемещений. Объяснить экспоненциальный рост шагов.
+
+```python
+def hanoi(n, source, target, auxiliary):
+    if n == 1:
+        print(f"Переместить диск 1 с {source} на {target}")
+        return
+    hanoi(n - 1, source, auxiliary, target)
+    print(f"Переместить диск {n} с {source} на {target}")
+    hanoi(n - 1, auxiliary, target, source)
+
+n = 3
+print(f"Дисков: {n}, шагов: {2**n - 1}")
+hanoi(n, 'A', 'C', 'B')
+```
+
+Почему шаги растут экспоненциально: T(n) = 2·T(n-1) + 1 → T(n) = 2ⁿ - 1. Каждый новый диск удваивает количество операций.
+
+### 11. Quick Sort
+Описание: Реализовать быструю сортировку с выбором pivot и объяснить влияние стратегии выбора.
+
+```
+def quick_sort(arr, pivot_strategy="middle"):
+    if len(arr) <= 1:
+        return arr
+    if pivot_strategy == "first":
+        pivot = arr[0]
+    elif pivot_strategy == "last":
+        pivot = arr[-1]
+    else:
+        pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quick_sort(left, pivot_strategy) + middle + quick_sort(right, pivot_strategy)
+
+arr = [64, 34, 25, 12, 22, 11, 90]
+print(quick_sort(arr))
+```
+
+Влияние pivot: Первый/последний даёт O(n²) на отсортированном массиве. Средний/случайный даёт O(n log n).
+
+### 12. Merge Sort с подсчётом слияний
+Описание: Реализовать сортировку слиянием и вывести количество операций слияния.
+
+```python
+def merge_sort_count(arr):
+    merge_count = [0]
+
+    def merge(left, right):
+        merge_count[0] += 1
+        result = []
+        i = j = 0
+        while i < len(left) and j < len(right):
+            if left[i] <= right[j]:
+                result.append(left[i])
+                i += 1
+            else:
+                result.append(right[j])
+                j += 1
+        result.extend(left[i:])
+        result.extend(right[j:])
+        return result
+
+    def sort(arr):
+        if len(arr) <= 1:
+            return arr
+        mid = len(arr) // 2
+        return merge(sort(arr[:mid]), sort(arr[mid:]))
+
+    return sort(arr), merge_count[0]
+
+arr = [38, 27, 43, 3, 9, 82, 10]
+sorted_arr, count = merge_sort_count(arr)
+print(f"Отсортировано: {sorted_arr}")
+print(f"Слияний: {count}")
+```
+
+### 13. Рекурсивный бинарный поиск
+Описание: Реализовать бинарный поиск рекурсивно с обработкой отсутствия элемента.
+
+```python
+def binary_search(arr, target, left, right):
+    if left > right:
+        return -1
+    mid = (left + right) // 2
+    if arr[mid] == target:
+        return mid
+    elif arr[mid] > target:
+        return binary_search(arr, target, left, mid - 1)
+    else:
+        return binary_search(arr, target, mid + 1, right)
+
+arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+print(binary_search(arr, 7, 0, len(arr) - 1))   # 6
+print(binary_search(arr, 15, 0, len(arr) - 1))  # -1
+```
+
+### 14. Односвязный список
+Описание: Реализовать односвязный список с вставкой, удалением и поиском.
+
+```python
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def insert_begin(self, data):
+        node = Node(data)
+        node.next = self.head
+        self.head = node
+
+    def insert_end(self, data):
+        node = Node(data)
+        if not self.head:
+            self.head = node
+            return
+        curr = self.head
+        while curr.next:
+            curr = curr.next
+        curr.next = node
+
+    def delete(self, data):
+        if not self.head:
+            return
+        if self.head.data == data:
+            self.head = self.head.next
+            return
+        curr = self.head
+        while curr.next and curr.next.data != data:
+            curr = curr.next
+        if curr.next:
+            curr.next = curr.next.next
+
+    def search(self, data):
+        curr = self.head
+        while curr:
+            if curr.data == data:
+                return True
+            curr = curr.next
+        return False
+
+    def display(self):
+        curr = self.head
+        while curr:
+            print(curr.data, end=" -> ")
+            curr = curr.next
+        print("None")
+
+ll = LinkedList()
+ll.insert_end(10)
+ll.insert_end(20)
+ll.insert_begin(5)
+ll.display()
+```
+
+### 15. Очередь через два стека
+Описание: Реализовать очередь на двух стеках, показав понимание FIFO и LIFO.
+
+```python
+class QueueViaStacks:
+    def __init__(self):
+        self.s1 = []
+        self.s2 = []
+
+    def enqueue(self, x):
+        self.s1.append(x)
+
+    def dequeue(self):
+        if not self.s2:
+            while self.s1:
+                self.s2.append(self.s1.pop())
+        if not self.s2:
+            raise IndexError("Очередь пуста")
+        return self.s2.pop()
+
+q = QueueViaStacks()
+q.enqueue(1)
+q.enqueue(2)
+q.enqueue(3)
+print(q.dequeue())  # 1
+print(q.dequeue())  # 2
+```
+
+### 16. Стек с минимумом за O(1)
+Описание: Реализовать стек с поддержкой получения минимального элемента за константное время.
+
+```python
+class MinStack:
+    def __init__(self):
+        self.stack = []
+        self.mins = []
+
+    def push(self, x):
+        self.stack.append(x)
+        if not self.mins or x <= self.mins[-1]:
+            self.mins.append(x)
+
+    def pop(self):
+        if not self.stack:
+            raise IndexError("Стек пуст")
+        x = self.stack.pop()
+        if x == self.mins[-1]:
+            self.mins.pop()
+        return x
+
+    def get_min(self):
+        if not self.mins:
+            raise IndexError("Стек пуст")
+        return self.mins[-1]
+
+s = MinStack()
+s.push(5)
+s.push(3)
+s.push(7)
+print(s.get_min())  # 3
+s.pop()
+print(s.get_min())  # 3
+s.pop()
+print(s.get_min())  # 5
+```
+
+### 17. Алгоритм Дейкстры с выводом пути
+Описание: Найти кратчайший путь во взвешенном графе, вывести расстояние и сам путь.
 
