@@ -127,3 +127,19 @@ massiv = [7, 3, 2, 8, 9, 12, 14, 3, 78, 54, 9, 34]
 
 print(heapsort(massiv))
 ```
+
+### 4. Группировка анаграмм слов (O(n*m log m))
+Описание: Сгруппировать анаграммы слов с минимальным количеством сравнений.
+
+```python
+from collections import defaultdict
+
+def group_anagrams(words):
+    groups = defaultdict(list)
+
+    for word in words:
+        key = ''.join(sorted(word))
+        groups[key].append(word)
+
+    return list(groups.values())
+```
