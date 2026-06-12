@@ -91,3 +91,39 @@ def count_popular(arr, k):
 
     return result
 ```
+
+### 3. Heap Sort
+Описание: Реализовать Heap Sort без использования встроенных структур данных.
+
+```python
+def heapify(arr, n, i):
+    largest = i
+    left = i*2+1
+    right = i*2+2
+
+    if left < n and arr[left] > arr[largest]:
+        largest = left
+    
+    if right < n and arr[right] > arr[largest]:
+        largest = right
+    
+    if largest != i:
+        arr[i], arr[largest] = arr[largest], arr[i]
+        heapify(arr, n, largest)
+    
+def heapsort(arr):
+    n = len(arr)
+
+    for i in range(n//2 - 1, -1, -1):
+        heapify(arr, n, i)
+
+    for i in range(n-1, 0, -1):
+        arr[0], arr[i] = arr[i], arr[0]
+        heapify(arr, i, 0)
+
+    return arr
+
+massiv = [7, 3, 2, 8, 9, 12, 14, 3, 78, 54, 9, 34]
+
+print(heapsort(massiv))
+```
