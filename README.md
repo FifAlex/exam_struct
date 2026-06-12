@@ -75,3 +75,99 @@ arr = [10, 20, 30, 40, 50]
 idx = linear_search(arr, 30)
 print(f"Найден на индексе {idx}" if idx != -1 else "Не найден")
 ```
+
+### 5. Стек на массиве
+Описание: Реализовать стек с операциями push, pop и top.
+
+```python
+class Stack:
+    def __init__(self):
+        self.items = []
+
+    def push(self, x):
+        self.items.append(x)
+
+    def pop(self):
+        if self.items:
+            return self.items.pop()
+        raise IndexError("Стек пуст")
+
+    def top(self):
+        if self.items:
+            return self.items[-1]
+        raise IndexError("Стек пуст")
+
+s = Stack()
+s.push(10)
+s.push(20)
+print(s.top())  # 20
+print(s.pop())  # 20
+print(s.top())  # 10
+```
+
+6. Очередь на массиве
+Описание: Реализовать очередь с операциями enqueue и dequeue.
+
+```python
+class Queue:
+    def __init__(self):
+        self.items = []
+
+    def enqueue(self, x):
+        self.items.append(x)
+
+    def dequeue(self):
+        if self.items:
+            return self.items.pop(0)
+        raise IndexError("Очередь пуста")
+
+q = Queue()
+q.enqueue(10)
+q.enqueue(20)
+print(q.dequeue())  # 10
+print(q.dequeue())  # 20
+```
+
+7. Проверка скобок через стек
+Описание: Проверить корректность круглых и квадратных скобок в выражении.
+
+```python
+def is_valid_brackets(s):
+    stack = []
+    pairs = {')': '(', ']': '['}
+    for ch in s:
+        if ch in '([':
+            stack.append(ch)
+        elif ch in ')]':
+            if not stack or stack.pop() != pairs[ch]:
+                return False
+    return len(stack) == 0
+
+print(is_valid_brackets("([])[]"))   # True
+print(is_valid_brackets("([)]"))     # False
+print(is_valid_brackets("(([]"))     # False
+```
+
+8. Размен монет (жадный алгоритм)
+Описание: Разменять сумму минимальным количеством монет номиналами 1, 2, 5, 10.
+
+```python
+def min_coins(amount):
+    coins = [10, 5, 2, 1]
+    result = {}
+    for coin in coins:
+        count = amount // coin
+        if count > 0:
+            result[coin] = count
+            amount -= count * coin
+    return result
+
+print(min_coins(27))  # {10: 2, 5: 1, 2: 1}
+```
+
+9. Максимальное количество встреч
+Описание: Выбрать максимальное число непересекающихся встреч. Каждая встреча задана временем начала и конца
+
+```python
+None)))))
+```
