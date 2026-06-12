@@ -90,12 +90,14 @@ class Stack:
     def pop(self):
         if self.items:
             return self.items.pop()
-        raise IndexError("Стек пуст")
+        else:
+            print("Стек пуст")
 
     def top(self):
         if self.items:
             return self.items[-1]
-        raise IndexError("Стек пуст")
+        else:
+            print("Стек пуст")
 
 s = Stack()
 s.push(10)
