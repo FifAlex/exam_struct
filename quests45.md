@@ -143,3 +143,60 @@ def group_anagrams(words):
 
     return list(groups.values())
 ```
+
+### 5. Мосты и точки сочленения
+Описание: Реализовать поиск мостов и точек сочленения в графе. Программа должна определять критически важные рёбра и вершины сети.
+
+```python
+def find_bridges_and_cutpoints(graph):
+    n = len(graph)
+
+    timer = 0
+
+    visited = [False] * n
+    tin = [-1] * n
+    low = [-1] * n
+
+    bridges = []
+    articulation = set()
+
+    def dfs(v, parent=-1):
+        nonlocal timer
+
+        visited[v] = True
+
+        tin[v] = low[v] = timer
+        timer += 1
+
+        children = 0
+
+        for to in graph[v]:
+
+            if to == parent:
+                continue
+
+            if visited[to]:
+                low[v] = min(low[v], tin[to])
+
+            else:
+                dfs(to, v)
+
+                low[v] = min(low[v], low[to])
+
+                if low[to] > tin[v]:
+                    bridges.append((v, to))
+
+                if parent != -1 and low[to] >= tin[v]:
+                    articulation.add(v)
+
+                children += 1
+
+        if parent == -1 and children > 1:
+            articulation.add(v)
+
+    for v in range(n):
+        if not visited[v]:
+            dfs(v)
+
+    return bridges, articulation
+```
