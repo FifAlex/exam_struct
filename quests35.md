@@ -230,3 +230,203 @@ print(s.get_min())  # 5
 ### 8. Алгоритм Дейкстры с выводом пути
 Описание: Найти кратчайший путь во взвешенном графе, вывести расстояние и сам путь.
 
+```python
+import heapq
+
+
+def dijkstra(graph, start, end):
+    # Кратчайшие расстояния от start
+    dist = {vertex: float("inf") for vertex in graph}
+    dist[start] = 0
+
+    # Предыдущая вершина на кратчайшем пути
+    prev = {vertex: None for vertex in graph}
+
+    # Приоритетная очередь (расстояние, вершина)
+    pq = [(0, start)]
+
+    while pq:
+        current_dist, current_vertex = heapq.heappop(pq)
+
+        # Пропускаем устаревшую запись
+        if current_dist > dist[current_vertex]:
+            continue
+
+        # Перебираем соседей
+        for neighbor, weight in graph[current_vertex]:
+            new_dist = current_dist + weight
+
+            if new_dist < dist[neighbor]:
+                dist[neighbor] = new_dist
+                prev[neighbor] = current_vertex
+                heapq.heappush(pq, (new_dist, neighbor))
+
+    # Если путь не существует
+    if dist[end] == float("inf"):
+        return float("inf"), []
+
+    # Восстановление пути
+    path = []
+    current = end
+
+    while current is not None:
+        path.append(current)
+        current = prev[current]
+
+    path.reverse()
+
+    return dist[end], path
+
+
+# Пример графа
+graph = {
+    "A": [("B", 1), ("C", 4)],
+    "B": [("A", 1), ("C", 2), ("D", 5)],
+    "C": [("A", 4), ("B", 2), ("D", 1)],
+    "D": [("B", 5), ("C", 1)]
+}
+
+distance, path = dijkstra(graph, "A", "D")
+
+print("Кратчайшее расстояние:", distance)
+print("Кратчайший путь:", " -> ".join(path))
+```
+
+### 9. Алгоритм Прима
+Описание: Построить минимальное остовное дерево алгоритмом Прима.
+
+```python
+import heapq
+
+def prim(graph, start):
+    visited = set()
+    mst = []
+    total = 0
+    pq = [(0, None, start)]
+
+    while pq and len(visited) < len(graph):
+        w, u, v = heapq.heappop(pq)
+        if v in visited:
+            continue
+        visited.add(v)
+        if u:
+            mst.append((u, v, w))
+            total += w
+        for nxt, weight in graph[v]:
+            if nxt not in visited:
+                heapq.heappush(pq, (weight, v, nxt))
+
+    return mst, total
+
+graph = {
+    'A': [('B', 2), ('C', 3), ('D', 6)],
+    'B': [('A', 2), ('D', 1)],
+    'C': [('A', 3), ('D', 4)],
+    'D': [('A', 6), ('B', 1), ('C', 4)],
+}
+
+mst, w = prim(graph, 'A')
+print(f"MST: {mst}, Вес: {w}")
+```
+
+### 10. Алгоритм Крускала
+Описание: Построить минимальное остовное дерево алгоритмом Крускала с Union-Find.
+
+```python
+class UnionFind:
+    def __init__(self, vertices):
+        self.parent = {v: v for v in vertices}
+        self.rank = {v: 0 for v in vertices}
+
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+
+    def union(self, x, y):
+        rx, ry = self.find(x), self.find(y)
+        if rx == ry:
+            return False
+        if self.rank[rx] < self.rank[ry]:
+            self.parent[rx] = ry
+        elif self.rank[rx] > self.rank[ry]:
+            self.parent[ry] = rx
+        else:
+            self.parent[ry] = rx
+            self.rank[rx] += 1
+        return True
+
+def kruskal(graph):
+    vertices = list(graph.keys())
+    edges = set()
+    for u in graph:
+        for v, w in graph[u]:
+            edges.add((tuple(sorted([u, v])), w))
+    edges = sorted(edges, key=lambda x: x[1])
+
+    uf = UnionFind(vertices)
+    mst = []
+    total = 0
+    for (u, v), w in edges:
+        if uf.union(u, v):
+            mst.append((u, v, w))
+            total += w
+    return mst, total
+
+graph = {
+    'A': [('B', 2), ('C', 3), ('D', 6)],
+    'B': [('A', 2), ('D', 1)],
+    'C': [('A', 3), ('D', 4)],
+    'D': [('A', 6), ('B', 1), ('C', 4)],
+}
+
+mst, w = kruskal(graph)
+print(f"MST: {mst}, Вес: {w}")
+```
+
+### 11. HashMap с цепочками
+Описание: Реализовать собственную хеш-таблицу с цепочками для разрешения коллизий.
+
+```python
+class HashMap:
+    def __init__(self, capacity=16):
+        self.capacity = capacity
+        self.size = 0
+        self.buckets = [[] for _ in range(capacity)]
+
+    def _hash(self, key):
+        return hash(key) % self.capacity
+
+    def put(self, key, value):
+        idx = self._hash(key)
+        for i, (k, v) in enumerate(self.buckets[idx]):
+            if k == key:
+                self.buckets[idx][i] = (key, value)
+                return
+        self.buckets[idx].append((key, value))
+        self.size += 1
+
+    def get(self, key):
+        idx = self._hash(key)
+        for k, v in self.buckets[idx]:
+            if k == key:
+                return v
+        return None
+
+    def remove(self, key):
+        idx = self._hash(key)
+        for i, (k, v) in enumerate(self.buckets[idx]):
+            if k == key:
+                del self.buckets[idx][i]
+                self.size -= 1
+                return True
+        return False
+
+hm = HashMap()
+hm.put("apple", 5)
+hm.put("banana", 7)
+print(hm.get("apple"))   # 5
+hm.remove("apple")
+print(hm.get("apple"))   # None
+```
+
